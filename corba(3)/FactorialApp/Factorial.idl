@@ -1,0 +1,5 @@
+module FactorialApp {
+    interface Factorial {
+        long compute(in long n);
+    };
+};

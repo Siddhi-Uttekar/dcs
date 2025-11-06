@@ -1,0 +1,4 @@
+﻿Instructions
+1. javac DynamicNameServer.java DynamicNameClient.java
+2. In terminal 1 run: java DynamicNameServer
+3. In terminal 2 run: java DynamicNameClient

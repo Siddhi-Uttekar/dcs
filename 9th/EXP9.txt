@@ -1,0 +1,125 @@
+✅ Step 1: Confirm ActiveMQ Web Console
+Make sure ActiveMQ is running
+https://activemq.apache.org/components/classic/download/classic-05-19-01
+
+cd "C:\apache-activemq-5.19.1-bin\apache-activemq-5.19.1\bin"
+
+Start ActiveMQ (Windows):
+cmd - activemq.bat start
+
+Open Command Prompt (Admin) or PowerShell (Admin) and go to the bin folder of the extracted
+
+for 9th
+https://adoptium.net/en-GB/temurin/releases?version=11
+setx JAVA_HOME "C:\Program Files\Eclipse Adoptium\jdk-11.0.29.7-hotspot"
+.\activemq start
+
+
+if error found like
+ If you get Address already in use (port 61616) or other bind errors:
+
+   a) Check if ActiveMQ is already running by opening the web console:
+      http://localhost:8161/admin
+        — login admin / admin.
+   b) If console does not open, find which process uses 61616:
+    cmd -   netstat -ano | findstr 61616
+      Kill the PID shown (replace <PID>):
+    cmd -taskkill /PID <PID> /F
+
+Then start again
+    cmd - activemq.bat start
+
+
+if you see in console something like
+INFO | ActiveMQ WebConsole available at http://127.0.0.1:8161/
+
+So open your browser and go to → http://localhost:8161/admin
+Username: admin
+Password: admin
+
+
+✅ Step 2: Build your IntelliJ project
+
+In IntelliJ’s bottom terminal, run:  mvn clean install
+This compiles your code and ensures Maven dependencies are downloaded.
+Wait for BUILD SUCCESS.
+
+✅ Step 3: Run your ESBRoute (message routing logic)
+Open ESBRoute.java.
+Right-click in the code → Run 'ESBRoute.main()'.
+
+This will start the Camel route that sends messages to/from ActiveMQ.
+
+✅ Step 4 – Run the Subscribers (simulate multiple consumers)
+
+These subscribers will listen to the topic NewsTopic that ESBRoute is publishing to.
+
+🔹 Create two run configurations
+
+Go to:
+Run → Edit Configurations → + → Application
+
+Fill in:
+
+Name: Subscriber1
+
+Main class: com.assignment.MessageSubscriber
+
+Program arguments: Sub1
+
+Use classpath of module: PubSubAssignment
+
+Click Apply → OK
+
+Repeat the same for Subscriber2
+
+Name: Subscriber2
+
+Main class: com.assignment.MessageSubscriber
+
+Program arguments: Sub2
+
+Apply → OK
+
+
+
+Run Subscriber1, then Subscriber2.
+
+
+
+
+✅ Step 5 – Run the REST Web Service
+
+
+Now start your REST endpoint which publishes messages.
+
+Open MessageWebService.java
+
+Right-click → Run 'MessageWebService.main()'
+
+
+You should see something like:
+
+Server started on port 8080
+
+
+✅ Step 6 – Test your REST endpoint
+
+in Postman:
+
+Method: POST
+
+URL: http://localhost:8080/publish
+
+Body → raw → text: Hello from REST API
+
+
+
+✅ Step 7 – Verify in ActiveMQ Console
+
+Go to
+👉 http://localhost:8161/admin
+ → Manage ActiveMQ broker → Topics
+
+That confirms your message flowed through the whole distributed system:
+REST Web Service → ActiveMQ → ESB Route → Subscribers

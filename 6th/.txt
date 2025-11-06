@@ -1,0 +1,120 @@
+MapReduce is a programming model used for processing large datasets in a distributed manner across multiple computers (nodes).
+
+It divides work into two key phases:
+
+Map Phase — Processes input data and converts it into intermediate (key, value) pairs.
+
+Reduce Phase — Groups data by key and aggregates (reduces) values for each key.
+
+⚙️ Real-Life Analogy
+
+Imagine you want to count how many times each word appears in a collection of documents.
+
+Mapper: Each person reads one document and makes a list like:
+("the", 1), ("dog", 1), ("fox", 1)
+
+Shuffling: You collect all lists and group by word:
+"the" → [1,1,1], "fox" → [1,1], "dog" → [1,2]
+
+Reducer: For each word, sum all the 1s.
+"the" → 3, "dog" → 2, "fox" → 2
+
+
+in codee-
+------
+Q: What does re.sub(r'[^\w\s]', '', text) do?
+A: It uses a regular expression to remove all punctuation and special symbols from the text, keeping only words and spaces.
+\w keeps letters, digits, underscores
+\s keeps whitespace
+^ negates the pattern, so it removes everything else
+The empty string '' replaces those unwanted characters
+
+text = "Hello, World! Let's test: this-code."
+Hello World Lets test thiscode
+-------
+
+what is yield
+If you use yield, the function sends one value, pauses, and can continue to produce more values later.
+
+---------
+
+So if __name__ == '__main__':
+ensures that the code inside runs only when the script is executed directly, not when it’s imported as a module.
+
+---------
+
+The f before a string makes it an f-string, which allows variable interpolation — meaning you can directly place variables inside {} within a string.
+In f"- {doc}", the {doc} is replaced by the current document’s value during each loop iteration.
+
+--------------
+
+print("\n" + "=" * 30 + "\n")
+is used for formatting the output — it prints a divider line made of equal (=) signs, surrounded by blank lines.
+
+--------------
+
+pair → a (key, value) tuple (like ("apple", 1)).
+mapper() → a user-defined function, not built-in.
+Purpose → simulates the Map phase of MapReduce, where each document is processed to emit (word, 1) pairs for counting.
+
+--------------
+
+use of defaultdict(list)
+Dictionaries store data in key–value pairs.
+Each unique word (key) appears only once, and we can easily append multiple values to it.
+converts
+ mapped_pairs = [
+    ('apple', 1),
+    ('orange', 1),
+    ('banana', 1),
+    ('banana', 1),
+    ('orange', 1),
+    ('grape', 1),
+    ('apple', 1)
+]
+
+into {
+  'apple': [1, 1],
+  'orange': [1, 1],
+  'banana': [1, 1],
+  'grape': [1]
+}
+
+-----------
+in reduced phase - for key, values in sorted(shuffled_data.items()):
+We’re iterating over each word (key) and its list of counts (values) from the Shuffle phase.
+
+-----------
+
+2️⃣ sorted(final_counts.items(), key=lambda item: item[1], reverse=True)
+
+This line sorts the items based on their count values, not alphabetically.
+
+⚙️ Let’s break down the parameters:
+Part	Meaning
+sorted()	A built-in Python function used to sort iterables.
+final_counts.items()	The data we want to sort (list of tuples like ('apple', 2)).
+key=lambda item: item[1]	Custom sorting key → it tells Python to sort based on the second element of each tuple (item[1]), i.e., the count.
+reverse=True	Sorts in descending order (largest count first).
+
+-----------------------
+4️⃣ print(f"{word:<15} {count}")
+
+This prints the results in a formatted table-like style.
+
+🧩 f-string with formatting:
+
+{word:<15} means:
+
+< → left align text.
+
+15 → reserve 15 character spaces for the word.
+
+So words line up neatly, like this:
+
+----------
+A lambda is an anonymous one-line function used for short, temporary operations.
+Here, lambda item: item[1] tells Python to sort the dictionary items based on the second element of each tuple (the count value).
+It’s used because it’s simpler than defining a separate function for such a small task.
+
+-----------

@@ -1,0 +1,6 @@
+module StringApp {
+    interface StringOps {
+        string reverse(in string input);
+        string toUpper(in string input);
+    };
+};
