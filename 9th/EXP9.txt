@@ -125,3 +125,114 @@ Go to
 
 That confirms your message flowed through the whole distributed system:
 REST Web Service → ActiveMQ → ESB Route → Subscribers
+----------------------------------------------------
+. Concept to Explain
+
+This practical demonstrates publish-subscribe messaging using ActiveMQ with a REST service and Java subscribers.
+
+Key components:
+
+REST Web Service – publishes messages to a topic (NewsTopic).
+
+ActiveMQ – message broker that manages topics and delivers messages to subscribers.
+
+ESBRoute (Apache Camel) – acts as a route or middleware, forwarding messages from REST to ActiveMQ and subscribers.
+
+Subscribers – multiple consumers (Subscriber1 and Subscriber2) listening to the topic and receiving messages in real-time.
+
+Purpose: Show distributed messaging, multiple subscribers, and integration of REST with messaging middleware.
+
+2. Practical Flow to Explain
+
+You can explain it step by step as if telling a story:
+
+Start ActiveMQ broker
+
+Navigate to bin folder → activemq.bat start.
+
+Confirm it’s running: http://localhost:8161/admin
+ (login: admin/admin).
+
+Handles any port errors if 61616 is in use.
+
+ActiveMQ manages topics and distributes messages to subscribers.
+
+Build the IntelliJ project
+
+mvn clean install → ensures all dependencies are resolved and code is compiled.
+
+Essential before running subscribers or REST service.
+
+Run ESBRoute
+
+Starts Apache Camel route for message routing.
+
+This acts as a bridge between REST and ActiveMQ topic.
+
+Run Subscribers
+
+Create two run configurations in IntelliJ: Subscriber1 and Subscriber2.
+
+Each connects to NewsTopic and listens for incoming messages.
+
+Run both to simulate multiple consumers.
+
+Output appears in subscriber console when a message is received.
+
+Run REST Web Service
+
+Starts a server on port 8080.
+
+Exposes /publish endpoint that accepts POST requests with message content.
+
+Test REST endpoint
+
+Use Postman:
+
+Method: POST
+URL: http://localhost:8080/publish
+Content-Type: text/plain
+Body: Hello from REST API
+
+
+This sends a message into the system.
+
+Verify in ActiveMQ
+
+Go to Topics → NewsTopic in ActiveMQ console.
+
+Confirms:
+
+Number of subscribers connected
+
+Messages dispatched and dequeued
+
+Demonstrates that the message was successfully published and delivered to all subscribers.
+
+3. Key Points to Emphasize in Viva
+
+Difference between Queue vs Topic:
+
+Queue → 1 message → 1 consumer
+
+Topic → 1 message → all active subscribers
+
+Role of ESBRoute / Apache Camel: routes messages reliably between REST and ActiveMQ.
+
+Role of Subscribers: demonstrate real-time message consumption.
+
+REST API testing → shows how external clients can publish messages.
+
+ActiveMQ Console → shows message flow, topic stats, and number of consumers.
+
+✅ Tip for viva:
+
+Draw a small diagram:
+
+REST API → ESBRoute → ActiveMQ Topic (NewsTopic) → Subscriber1
+                                           → Subscriber2
+
+
+Point at each step while explaining the flow of a single message.
+
+Mention 415 errors (if asked) → caused by wrong Content-Type in REST request.
