@@ -111,6 +111,8 @@ Method: POST
 
 URL: http://localhost:8080/publish
 
+Content-Type: text/plain
+
 Body → raw → text: Hello from REST API
 
 
