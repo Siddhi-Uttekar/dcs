@@ -1,0 +1,141 @@
+1️⃣ What is Dijkstra-Scholten Algorithm?
+
+Purpose:
+Detect global termination in a distributed system where processes can send messages to each other.
+
+Key idea:
+
+One process acts as the initiator (root of a tree).
+
+Every message creates a parent-child relationship.
+
+When a process becomes passive, it sends a signal to its parent.
+
+Termination is detected when the initiator has no children and no messages in transit.
+
+Terminology in algorithm:
+
+Term	Meaning
+Initiator	The process that starts computation (Process 0 in your code)
+Active	Process is performing work
+Passive	Process is idle, waiting for messages
+Parent	Process that sent a message to a child process
+Child	Process that received a message from parent
+Deficit	Number of messages a process sent to its children and are not yet acknowledged
+2️⃣ Mapping to Your Code
+Dijkstra-Scholten Concept	Your Code
+Initiator	Process 0 (isInitiator = true)
+Child	children list in Process class
+Parent	Implicit via children list and SIGNAL messages
+Message in transit	messageQueue
+Active/Passive	isActive boolean
+Signal to parent	"SIGNAL" message sent when becomePassive()
+3️⃣ Flow of Dijkstra-Scholten Algorithm in Your Code
+
+Initiator starts computation
+
+if (isInitiator) sendMessages();
+
+
+P0 sends messages to random processes → these processes become children of P0.
+
+Child processes become active
+
+if (msg.type.equals("COMPUTATION")) isActive = true;
+
+
+Whenever a process receives a COMPUTATION message, it becomes active.
+
+It may also send messages to other processes → those become its children.
+
+Maintaining the parent-child tree
+
+When process X sends a message to Y:
+
+children.add(receiverId);
+deficit.incrementAndGet();
+
+
+X is parent, Y is child.
+
+Deficit tracks unacknowledged messages (messages in transit).
+
+Process becomes passive
+
+private void becomePassive() {
+    isActive = false;
+    synchronized(children) {
+        for(Integer childId : children) {
+            messageQueue.add(new Message(id, childId, "SIGNAL"));
+        }
+        children.clear();
+    }
+}
+
+
+When X becomes passive, it sends SIGNAL messages to all its children.
+
+SIGNAL informs children that X is done, fulfilling the Dijkstra-Scholten “ack to parent.”
+
+Deficit decremented
+
+else if (msg.type.equals("SIGNAL")) deficit.decrementAndGet();
+
+
+When a process receives a SIGNAL from its child, it knows the child has finished work, just like the algorithm says.
+
+Initiator detects global termination
+
+if (isInitiator && checkTermination()) terminated.set(true);
+
+
+Termination condition matches Dijkstra-Scholten:
+
+Initiator passive ✅
+
+No children ✅
+
+No messages in transit ✅
+
+All deficits 0 ✅
+
+4️⃣ Key Idea — Tree Structure (Dijkstra-Scholten)
+
+Every message creates an implicit tree:
+
+         P0
+       /    \
+     P2      P4
+    /  \
+  P1    P3
+
+
+Parent sends message → child becomes active → eventually becomes passive → sends SIGNAL back to parent.
+
+Initiator (root) waits until all children acknowledged and no messages are left.
+
+5️⃣ Example Sequence in Your Code
+Step	Process	Action	Result
+1	P0	Sends COMPUTATION → P2	P2 active, child of P0, deficit++
+2	P2	Sends COMPUTATION → P1	P1 active, child of P2, P2 deficit++
+3	P1	Becomes passive	Sends SIGNAL to P2
+4	P2	Receives SIGNAL from P1	P2 deficit--, removes P1 from children
+5	P2	Becomes passive	Sends SIGNAL to P0
+6	P0	Receives SIGNAL from P2	Removes P2 from children
+7	P0	No children, no deficit, queue empty	Termination detected ✅
+
+This is exactly Dijkstra-Scholten in action.
+
+🔑 Takeaways
+
+children → tracks children in the DS tree.
+
+deficit → tracks messages still in transit.
+
+"SIGNAL" → message to parent when child finishes.
+
+Initiator detects termination when all children acked and queue empty.
+
+If you want, I can draw the Dijkstra-Scholten tree with arrows for messages and SIGNALS based on your code, so you can visualize exactly how messages flow and termination is detected.
+
+Do you want me to do that?
